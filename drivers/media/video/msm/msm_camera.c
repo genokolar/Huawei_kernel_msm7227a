@@ -2903,14 +2903,14 @@ static long msm_ioctl_config(struct file *filep, unsigned int cmd,
 		} else
 		{
             /*Condition that the flash is tps61310 */
-			if(machine_is_msm8255_u8680())
-			{
+			//if(machine_is_msm8255_u8680())
+			//{
 				if(LED_FLASH == flash_info.flashtype)
 				{
 					CDBG("tps61310_set_flash enter");
 					rc = tps61310_set_flash(flash_info.ctrl_data.led_state);
 				}
-			}
+			//}
             /*other flashes*/
 			else
 			{

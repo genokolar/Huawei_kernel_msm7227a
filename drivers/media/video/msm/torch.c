@@ -105,7 +105,9 @@ static long hw_camera_led_ioctl(struct file *filep ,unsigned int cmd, unsigned l
 			}
 			else
 			{
-				ret = msm_camera_flash_set_led_state(&hw_camera_led_data,camera_led_state);
+				//ret = msm_camera_flash_set_led_state(&hw_camera_led_data,camera_led_state);
+               ret = tps61310_set_flash(camera_led_state);
+
 				if(!ret)
 				{
 					atomic_set(&camera_led_flag,camera_led_state);
