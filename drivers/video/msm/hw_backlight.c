@@ -30,7 +30,7 @@
 #define PM_GPIO26_PWM_ID  2
 #define ADD_VALUE			4
 #define PWM_LEVEL_ADJUST	226
-#define BL_MIN_LEVEL 	    30
+#define BL_MIN_LEVEL 	    15
 
 /*LPG CTL MACRO  range 0 to 100*/
 #define PWM_LEVEL_ADJUST_LPG	90
