@@ -7801,7 +7801,7 @@ static struct mmc_platform_data msm7x30_sdc4_data = {
 #endif
 	.msmsdcc_fmin	= 144000,
 	.msmsdcc_fmid	= 24576000,
- * we modified the max value of the msmsdcc_fmax
+ /* we modified the max value of the msmsdcc_fmax
  * to slow down the max value of the clock of the
  * externel SD card slot
  * to make more compatible for more SD card */  
