@@ -218,11 +218,20 @@ static struct clkctl_acpu_speed pll0_960_pll1_245_pll2_1200_pll4_1008[] = {
 	{ 1, 122880, ACPU_PLL_1, 1, 1,  15360, 3, 2, 61440 },
 	{ 1, 245760, ACPU_PLL_1, 1, 0, 30720, 3, 3, 61440 },
 	{ 0, 300000, ACPU_PLL_2, 2, 3, 37500, 3, 4, 150000 },
-	{ 1, 320000, ACPU_PLL_0, 4, 2, 40000, 3, 4, 122880 },
-	{ 1, 480000, ACPU_PLL_0, 4, 1, 60000, 3, 5, 122880 },
+	{ 1, 320000, ACPU_PLL_0, 4, 0, 40000, 3, 4, 122880 },
+	{ 1, 480000, ACPU_PLL_0, 4, 0, 60000, 3, 5, 122880 },
 	{ 0, 504000, ACPU_PLL_4, 6, 1, 63000, 3, 6, 200000 },
 	{ 1, 600000, ACPU_PLL_2, 2, 1, 75000, 3, 6, 200000 },
 	{ 1, 1008000, ACPU_PLL_4, 6, 0, 126000, 3, 7, 200000},
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK   //this is u8818
+        /* { enable[1], frequency[CPU-KHz], PLL, PLL_ID ,DIV [Freq_divider+1] , freq divided by 8[AHB-KHz], always 3 [ADIV], ACPU vdd, AXI-KHz } */
+	{ 1, 1075200, ACPU_PLL_0, 4, 0, 134400, 3, 7, 200000 },
+	{ 1, 1152000, ACPU_PLL_0, 4, 0, 144000, 3, 7, 200000 },
+	{ 1, 1228000, ACPU_PLL_0, 4, 0, 153600, 3, 7, 200000 },
+	{ 1, 1266400, ACPU_PLL_0, 4, 0, 158300, 3, 7, 200000 },
+	{ 1, 1304800, ACPU_PLL_0, 4, 0, 163100, 3, 7, 200000 },
+
+#endif
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}, {0, 0, 0, 0} }
 };
 
@@ -505,6 +514,15 @@ static void acpuclk_set_div(const struct clkctl_acpu_speed *hunt_s)
 		writel_relaxed(reg_clksel, A11S_CLK_SEL_ADDR);
 	}
 
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK
+	// Perform overclocking if requested
+	//if(hunt_s->a11clk_khz>1008000) {
+		// Change the speed of PLL0
+		writel(hunt_s->a11clk_khz/19200, PLLn_L_VAL(0));
+		udelay(50);
+	//}
+#endif
+
 	/* Program clock source and divider */
 	reg_clkctl = readl_relaxed(A11S_CLK_CNTL_ADDR);
 	reg_clkctl &= ~(0xFF << (8 * src_sel));
@@ -516,6 +534,14 @@ static void acpuclk_set_div(const struct clkctl_acpu_speed *hunt_s)
 	reg_clksel ^= 1;
 	writel_relaxed(reg_clksel, A11S_CLK_SEL_ADDR);
 
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK
+	// Recover from overclocking
+	//if(hunt_s->a11clk_khz<=1008000) {
+		// Restore the speed of PLL0
+		writel(PLL_960_MHZ, PLLn_L_VAL(2));
+		udelay(50);
+	//}
+#endif
 	/*
 	 * If the new clock divider is lower than the previous, then
 	 * program the divider after switching the clock
@@ -589,6 +615,8 @@ static int acpuclk_7627_set_rate(int cpu, unsigned long rate,
 			rc = acpuclk_set_vdd_level(tgt_s->vdd);
 			if (rc < 0) {
 				pr_err("Unable to switch ACPU vdd (%d)\n", rc);
+                                pr_err("ACPU vdd : tgt_s:%u  cur_s:%u\n",
+					tgt_s->vdd, cur_s->vdd);
 				goto out;
 			}
 		}
@@ -631,8 +659,8 @@ static int acpuclk_7627_set_rate(int cpu, unsigned long rate,
 
 			if (cur_s == NULL) { /* This should not happen. */
 				pr_err("No stepping frequencies found. "
-					"strt_s:%u tgt_s:%u\n",
-					strt_s->a11clk_khz, tgt_s->a11clk_khz);
+					"strt_s:%u tgt_s:%u  cur_s:%u\n",
+					strt_s->a11clk_khz, tgt_s->a11clk_khz, cur_s->a11clk_khz);
 				rc = -EINVAL;
 				goto out;
 			}
@@ -671,8 +699,13 @@ static int acpuclk_7627_set_rate(int cpu, unsigned long rate,
 	if (strt_s->axiclk_khz != tgt_s->axiclk_khz) {
 		res = clk_set_rate(drv_state.ebi1_clk,
 				tgt_s->axiclk_khz * 1000);
-		if (res < 0)
-			pr_warning("Setting AXI min rate failed (%d)\n", res);
+		if (res < 0) {
+			pr_warning("1/Setting AXI min rate failed (%d)\n", res);
+                        pr_err("a11clk_khz : strt_s:%u tgt_s:%u  cur_s:%u\n",
+					strt_s->a11clk_khz, tgt_s->a11clk_khz, cur_s->a11clk_khz);
+                        pr_err("axiclk_khz : strt_s:%u tgt_s:%u  cur_s:%u\n",
+					strt_s->axiclk_khz, tgt_s->axiclk_khz, cur_s->axiclk_khz);
+               }
 	}
 
 	/* Disable PLLs we are not using anymore. */
@@ -751,7 +784,7 @@ static void __init acpuclk_hw_init(void)
 
 	res = clk_set_rate(drv_state.ebi1_clk, speed->axiclk_khz * 1000);
 	if (res < 0)
-		pr_warning("Setting AXI min rate failed (%d)\n", res);
+		pr_warning("2/Setting AXI min rate failed (%d)\n", res);
 	res = clk_enable(drv_state.ebi1_clk);
 	if (res < 0)
 		pr_warning("Enabling AXI clock failed (%d)\n", res);
