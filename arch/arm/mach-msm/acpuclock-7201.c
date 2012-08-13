@@ -222,8 +222,11 @@ static struct clkctl_acpu_speed pll0_960_pll1_245_pll2_1200_pll4_1008[] = {
 	{ 1, 480000, ACPU_PLL_0, 4, 1, 60000, 3, 5, 122880 },
 	{ 0, 504000, ACPU_PLL_4, 6, 1, 63000, 3, 6, 200000 },
 	{ 1, 600000, ACPU_PLL_2, 2, 1, 75000, 3, 6, 200000 },
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK   //this is c8812
+	{ 1, 806400, ACPU_PLL_2, 2, 0, 100800, 3, 7, 200000 },
+#endif
 	{ 1, 1008000, ACPU_PLL_4, 6, 0, 126000, 3, 7, 200000},
-#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK   //this is u8818
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK   //this is c8812
         /* { enable[1], frequency[CPU-KHz], PLL, PLL_ID ,DIV [Freq_divider+1] , freq divided by 8[AHB-KHz], always 3 [ADIV], ACPU vdd, AXI-KHz } */
 	{ 1, 1075200, ACPU_PLL_2, 2, 0, 134400, 3, 7, 200000 },
 	{ 1, 1152000, ACPU_PLL_2, 2, 0, 144000, 3, 7, 200000 },
@@ -305,7 +308,19 @@ static struct clkctl_acpu_speed pll0_960_pll1_737_pll2_1200_pll4_1008[] = {
 	{ 1, 480000, ACPU_PLL_0, 4, 1, 60000, 3, 5, 122880 },
 	{ 0, 504000, ACPU_PLL_4, 6, 1, 63000, 3, 6, 200000 },
 	{ 1, 600000, ACPU_PLL_2, 2, 1, 75000, 3, 6, 200000 },
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK   //this is u8818
+	{ 1, 806400, ACPU_PLL_2, 2, 0, 100800, 3, 7, 200000 },
+#endif
 	{ 1, 1008000, ACPU_PLL_4, 6, 0, 126000, 3, 7, 200000},
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK   //this is u8818
+        /* { enable[1], frequency[CPU-KHz], PLL, PLL_ID ,DIV [Freq_divider+1] , freq divided by 8[AHB-KHz], always 3 [ADIV], ACPU vdd, AXI-KHz } */
+	{ 1, 1075200, ACPU_PLL_2, 2, 0, 134400, 3, 7, 200000 },
+	{ 1, 1152000, ACPU_PLL_2, 2, 0, 144000, 3, 7, 200000 },
+	{ 1, 1228000, ACPU_PLL_2, 2, 0, 153600, 3, 7, 200000 },
+	{ 1, 1266400, ACPU_PLL_2, 2, 0, 158300, 3, 7, 200000 },
+	{ 1, 1304800, ACPU_PLL_2, 2, 0, 163100, 3, 7, 200000 },
+
+#endif
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}, {0, 0, 0, 0} }
 };
 
