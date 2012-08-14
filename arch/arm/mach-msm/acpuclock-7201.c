@@ -531,7 +531,7 @@ static void acpuclk_set_div(const struct clkctl_acpu_speed *hunt_s)
 
 #ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK
 	// Perform overclocking if requested
-	if(hunt_s->pll==ACPU_PLL_2 && hunt_s->a11clk_khz>1008000) {
+	if(hunt_s->pll==ACPU_PLL_2 && hunt_s->a11clk_khz>800000) {
 		// Change the speed of PLL2
 		writel_relaxed(hunt_s->a11clk_khz/19200, PLLn_L_VAL(ACPU_PLL_2));
 		udelay(50);
@@ -551,7 +551,7 @@ static void acpuclk_set_div(const struct clkctl_acpu_speed *hunt_s)
 
 #ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK
 	// Recover from overclocking
-	if(hunt_s->pll==ACPU_PLL_2 && hunt_s->a11clk_khz<=1008000) {
+	if(hunt_s->pll==ACPU_PLL_2 && hunt_s->a11clk_khz<=800000) {
 		// Restore the speed of PLL2
 		writel_relaxed(PLL_1200_MHZ, PLLn_L_VAL(ACPU_PLL_2));
 		udelay(50);
