@@ -245,7 +245,7 @@ static struct msm_i2c_platform_data msm_gsbi1_qup_i2c_pdata = {
 #define MSM_PMEM_MDP_SIZE       0x2300000
 #define MSM7x25A_MSM_PMEM_MDP_SIZE       0x1500000
 
-#define MSM_PMEM_ADSP_SIZE      0x1100000
+#define MSM_PMEM_ADSP_SIZE      0x1000000 //0x1100000
 #define MSM7x25A_MSM_PMEM_ADSP_SIZE      0xB91000
 
 
@@ -254,7 +254,7 @@ static struct msm_i2c_platform_data msm_gsbi1_qup_i2c_pdata = {
 #define MSM_FB_SIZE		0x260000
 #else
 /* increase three framebuffers to four */
-#define MSM_FB_SIZE		0x600000
+#define MSM_FB_SIZE		0x500000 //0x600000
 #endif
 #define MSM7x25A_MSM_FB_SIZE	0xE1000
 #else
